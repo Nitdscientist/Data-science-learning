@@ -1,0 +1,85 @@
+use customer
+# Q1.Write a SQL query to retrieve the first 5 rows from the "customers" table .
+
+select * from customers_data
+select * from customers_data limit 5
+
+# Q2. Write a SQL query to retrieve the unique city names from "customers" table sorted in descending order.
+
+select distinct city from customers_data order by city desc
+
+# Q3. Write a SQL query to get the number of unique city names "offices" table.
+
+select * from offices
+select distinct city from offices
+
+# Q4. Write a SQL query to get the maximum, minimum and average value from the "creditLimit" column in the "customers" table.
+
+select max(creditLimit) as max_creditLimit,min(creditLimit) as min_creditLimit,
+avg(creditLimit) as avg_creditLimit from customers_data
+
+
+# Q5. Write a SQL query to get the city names which are present in “offices” table but not in “customer” table.
+
+select * from customers_data
+
+select  distinct a.city,b.city
+from offices a
+left join customers_data b
+on a.city=b.city
+where b.city is null;
+
+# Q6. Write a SQL query to get the city names which are present in “offices” table as well as in “customer” table.
+
+select  distinct a.city,b.city
+from offices a
+left join customers_data b
+on a.city=b.city
+where b.city is not null;
+
+# Q7. Write a SQL query to get records where city or state is not given in “customer” table and creditlimit is in the range – 80000 to 130000.
+
+select * from customers_data where(city is null or state is null) and creditLimit between 80000 and 130000;
+
+
+# Q8. Write a SQL query to get the maximum number of orders placed on a particular date and what is that date in orders table.
+
+select quantityOrdered from orderdetails order by quantityOrdered desc
+
+select orders.status, orderdetails.quantityOrdered,orders.orderDate
+from orders
+inner join orderdetails
+on orders.orderNumber=orderdetails.orderNumber
+where orders.status="Shipped" and quantityOrdered=50 order by orderDate desc;
+
+# Q9. For the records which we get in previous question(Q8), write a SQL query to get the customer names and their phone numbers.
+
+SELECT orders.status, orderdetails.quantityOrdered, orders.orderDate, customers_data.customerName, customers_data.phone
+FROM orders
+INNER JOIN orderdetails ON orders.orderNumber = orderdetails.orderNumber
+INNER JOIN customers_data ON orders.customerNumber = customers_data.customerNumber
+WHERE orders.status = 'Shipped' AND orderdetails.quantityOrdered = 50
+ORDER BY orders.orderDate DESC;
+
+# Q10. SQL query to get the customer phone number and customer name from customers table where order is either cancelled or disputed in orders table.
+
+SELECT orders.status,customers_data.customerName, customers_data.phone
+FROM orders
+INNER JOIN customers_data ON orders.customerNumber = customers_data.customerNumber
+WHERE orders.status = 'Cancelled' or orders.status="Disputed";
+
+# Q11. Write a SQL query to get the top 4 highest selling products from orderdetails table.
+
+select * from orderdetails order by quantityOrdered desc limit 4;
+
+# Q12. Write a SQL query to get the count of orders placed by each customer in 2003 and 2004.
+
+SELECT customers_data.customerName, COUNT(orders.orderNumber) AS orderCount
+FROM customers_data
+INNER JOIN orders ON customers_data.customerNumber = orders.customerNumber
+WHERE orders.orderDate BETWEEN '2003-01-01' AND '2004-12-31'
+GROUP BY customers_data.customerName;
+
+# Q13. Write a SQL query to get the city names from customer table where more than 4 customers reside.
+
+select city from customers_data group by city having count(*) >4
